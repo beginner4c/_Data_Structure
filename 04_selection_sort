@@ -1,0 +1,30 @@
+#include<stdio.h>
+
+int main()
+{
+	/*
+	배열을 이용한 정렬
+	선택정렬(selection sort)
+	맨 앞의 데이터부터 순차적으로 정렬하는 방식
+	*/
+
+	int arr[5] = { 4,8,2,7,6 };
+	int tmp; // 임시저장변수
+	int len = sizeof(arr) / sizeof(int);
+/*
+	tmp = arr[0]; // 덮어 씌울 요소를 미리 백업
+	arr[0] = arr[2];
+	arr[2] = tmp;
+*/
+	for (int i = 0; i < len - 1; i++){
+		for (int j = i + 1 ; j < len ; j++){
+			if (arr[i] > arr[j]) {
+				tmp = arr[i];
+				arr[i] = arr[j];
+				arr[j] = tmp;
+			}
+		}
+	}
+	for (int i = 0; i < len; i++)
+		printf("%d ", arr[i]);
+}
