@@ -1,0 +1,31 @@
+#include<stdio.h>
+
+typedef struct people {
+	char name[10];
+	int age;
+	struct people *link; // struct people 형태의 주소를 저장할 포인터 변수
+}People;
+
+int main()
+{
+	People p1 = { "Park", 30, NULL };
+	People p2 = { "Myung", 24, NULL };
+	People p3 = { "Kyu", 20, NULL };
+
+	p1.link = &p2;
+	p2.link = &p3;
+	p3.link = &p1;
+
+	// * : 역참조
+	// . : 접근연산자
+	// * 보다 . 의 우선순위가 더 높다
+	// -> : * 과 . 합친 것
+
+	(*(*p1.link).link).age = 23; // p1 의 link
+	// (*p1.link) = p2
+	// (*(*p1.link).link) = p3		// 너무 복잡하다
+
+	p1.link->link->age = 23;
+
+	return 0;
+}
