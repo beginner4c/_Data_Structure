@@ -1,0 +1,70 @@
+#include<stdio.h>
+#define MAX 4
+
+typedef struct node {
+	int arr[MAX];
+	int front, rear; //front는 데이터를 빼낼 인덱스 번호
+	//rear는 데이터를 넣을 인덱스 번호
+}Queue;
+
+void init(Queue* p_q) {
+	p_q->front = p_q->rear = 0;
+}
+
+int index(int i) {
+	if (i == MAX - 1)
+		return 0;
+	else
+		return i + 1;
+}
+
+void enqueue(Queue *p_q, int data) {
+
+	p_q->rear = index(p_q->rear++);
+	if (p_q->rear == p_q->front) { //rear가 하나 증가될때 front와 같으면 overflow
+		printf("Queue Overflow\n");
+		return;
+	}
+
+	p_q->arr[p_q->rear] = data;
+	printf("%d 가 q의 %d 에 저장되었습니다\n", data, p_q->rear);
+}
+
+int dequeue(Queue *p_q) {
+	p_q->front = index(p_q->front++);
+	int back = p_q->arr[p_q->front];
+	p_q->arr[p_q->front] = NULL;
+
+	if (p_q->front == p_q->rear) {
+		printf("Stack Underflow\n");
+		return 0;
+	}
+
+	return back;
+}
+
+int peek(Queue *p_stack) {
+	return p_stack->arr[index(p_stack->front)];
+}
+
+int main()
+{
+	Queue q;
+	init(&q); //front와 rear를 0으로 초기화
+	enqueue(&q, 10);
+	enqueue(&q, 20);
+	enqueue(&q, 30);
+	enqueue(&q, 40); //Queue Overflow
+	printf("\n");
+
+	printf("peek : %d\n", peek(&q)); //front를 한칸 증가시킨 인덱스의 데이터 출력
+	printf("\n");
+
+	printf("dequeue : %d\n", dequeue(&q));
+	printf("dequeue : %d\n", dequeue(&q));
+	printf("dequeue : %d\n", dequeue(&q));
+	printf("dequeue : %d\n", dequeue(&q)); //Queue underflow
+	printf("\n");
+
+	return 0;
+}
