@@ -1,0 +1,130 @@
+#include<stdio.h>
+#include<stdlib.h>
+#define EMPTY 0
+
+// 재귀함수를 사용해서 자료를 삽입, 삭제하며, 추가, 수정도 가능하게 하는 거
+
+typedef struct node Linkedlist; //구조체의 선언부
+
+struct node { // Linkedlist 구조체의 내부
+	int data;
+	//int * ptr; => 정수의 주소를 저장할 포인터변수
+	Linkedlist* link; //Linkedlist구조체형태의 주소를 저장할 link포인터변수
+};
+
+Linkedlist* GetNode() { // 구조체 Linkedlist 로 반환하는 GetNode 함수
+	Linkedlist* tmp;
+	tmp = (Linkedlist*)malloc(sizeof(Linkedlist));
+	tmp->link = EMPTY;
+	return tmp;
+}
+
+//재귀함수를 사용해서 구현?
+
+void insert(Linkedlist** head, int data) { // 삽입은 구조체가 가르키는 노드가 없으면 추가, 있다면 노드에 연결
+	if (*head == EMPTY) { // 해당 구조체가 비어 있으면
+		*head = GetNode(); // 동적 할당
+		(*head)->data = data; // 데이터 채움
+		printf("insert data : %d\n", ((*head)->data)); // 출력
+		return;
+	}
+	insert(&(*head)->link, data);
+
+	// 아래도 작동하지만 위의 코드가 더 효율적이고 짧으므로 주석 처리
+
+	/*if((*head)->link == EMPTY) { // 해당 구조체의 link 가 비어 있으면
+		Linkedlist *tmp = GetNode(); // 구조체 tmp 생성 후 동적 할당
+		tmp->data = data; // tmp 에 데이터 채움
+		(*head)->link = tmp; // link 가 비어있던 구조체 link 에 tmp 삽입
+		printf("insert data : %d\n", tmp->data); // 출력
+	}
+	else { // 해당 구조체의 link 가 존재할 경우
+		Linkedlist *tmp = (*head)->link; // 구조체 tmp 생성 후 구조체의 link 를 저장
+		return insert(&tmp, data); // 재귀함수로 반복
+	}*/
+}
+
+int del(Linkedlist** head, int data) { // 삭제는 노드 연결 가운데가 끊어지면 그 양 옆을 다시 연결
+	//내가 재귀를 열심히 했는데 결국 못찾았어
+	//없는 데이터입니다. 출력하고 -1리턴
+	//찾으면 삭제하고 1 리턴
+	Linkedlist *tmp = (*head)->link;
+
+	if ((*head)->data == data) { // 최초의 *head 의 데이터가 맞을 경우
+		free(*head);
+		*head = tmp;
+		printf("del first case\n");
+		return 1;
+	}
+
+	if (tmp->data == data) { // 한번이라도 노드의 link 를 타고 넘어갔을 경우
+		Linkedlist *tmp2 = tmp->link;
+		(*head)->link = tmp2;
+		free(tmp);
+		printf("del second case\n");
+		return 1;
+	}
+	else if (tmp == EMPTY) {
+		printf("del Can't find data");
+		return -1;
+	}
+	else {
+		return del(&tmp, data);
+	}
+
+}
+
+void add(Linkedlist** head, int sData, int data) { // 추가는 노드 사이에 추가
+	//sData를 가진 노드 뒤에 data를 가진 노드를 삽입
+	//못찾으면 못찾았다고 출력
+	Linkedlist *tmp = (*head)->link;
+
+	if ((*head)->data == sData) { // 최초의 *head 의 데이터가 맞을 경우
+		Linkedlist *head2 = GetNode();
+		(*head)->link = head2;
+		head2->data = data;
+		head2->link = tmp;
+		printf("add first case\n");
+		return;
+	}
+
+	if (tmp->data == sData) { // 한 번이라도 노드의 link 를 타고 넘어간 경우
+		Linkedlist *head2 = GetNode();
+		head2->link = tmp->link;
+		head2->data = data;
+		tmp->link = head2;
+		printf("add second case\n");
+	}
+	else {
+		return add(&tmp, sData, data);
+	}
+}
+void modify(Linkedlist** head, int sData, int data) { // 수정 부분은 데이터만 변경하기 때문에 가장 쉬운 부분
+	//sData를 가진 노드의 data를 매개변수 data로 변경
+	//못찾으면 못찾았다고 출력
+	Linkedlist *tmp = (*head)->link;
+	if ((*head)->data == sData) {
+		(*head)->data = data;
+		printf("mod data %d to %d", sData,(*head)->data);
+		return;
+	}
+	else {
+		return modify(&tmp, sData, data);
+	}
+}
+void main() {
+	//head : 100번지
+	Linkedlist* head = EMPTY; // 빈 구조체 head 선언
+
+	insert(&head, 10);
+	insert(&head, 20);
+	insert(&head, 30);
+
+	int r;
+	r = del(&head, 20);
+	printf("r : %d\n", r);
+
+	add(&head, 10, 20);//10을 찾아서 그 뒤에 20을 추가할거야
+
+	modify(&head, 20, 40);//20을 찾아서 40으로 바꿀거야
+}
