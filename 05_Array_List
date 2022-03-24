@@ -1,0 +1,81 @@
+#include<stdio.h>
+#define MAX 5
+
+typedef struct node {
+	int arr[MAX];
+	int numOfData; // stack의 top => 데이터를 몇 개를 저장하고 있어?
+}Arraylist;
+
+void init(Arraylist * p_Arraylist) {
+	p_Arraylist->numOfData = 0;
+}
+
+void insert(Arraylist* p_Arraylist, int data) {
+	p_Arraylist->arr[p_Arraylist->numOfData] = data;
+	printf("%d 반 쩨 배열에 %d 삽입되었습니다.\n", p_Arraylist->numOfData, p_Arraylist->arr[p_Arraylist->numOfData]);
+	p_Arraylist->numOfData++;
+}
+
+void PrintAll(Arraylist* p_Arraylist) {
+	int tmp = 0;
+	printf("\n");
+	while (1) {
+		if (tmp < p_Arraylist->numOfData) {
+			printf("%d 번째 data : %d\n", tmp, p_Arraylist->arr[tmp]);
+			tmp++;
+		}
+		else
+			return;
+	}
+}
+
+void Remove(Arraylist * p_Arraylist, int data) {
+	//11 11 22 22 33
+	//0  1  2  3  4
+	//numofData == 5
+	int tmp = 0;
+
+	while (1) {
+		if (p_Arraylist->arr[tmp] == data) {
+			for (tmp; tmp < MAX; tmp++) {
+				p_Arraylist->arr[tmp] = p_Arraylist->arr[tmp + 1];
+			}
+			p_Arraylist->arr[tmp - 1] = p_Arraylist->arr[tmp - 2];
+			p_Arraylist->numOfData -= 1;
+			return;
+		}
+		else if (tmp == MAX) {
+			int new_data;
+			printf("No data, insert another one\n");
+			printf("삭제할 데이터를 입력 : ");
+			scanf("%d", &new_data);
+			return Remove(p_Arraylist, new_data);
+		}
+		tmp++;
+	}
+	
+}
+void main() {
+	Arraylist arraylist;
+	int data;
+	init(&arraylist); // data의 개수를 0으로 초기화
+
+	//5개의 데이터 저장
+	insert(&arraylist, 11); insert(&arraylist, 11);
+	insert(&arraylist, 22); insert(&arraylist, 22);
+	insert(&arraylist, 33);
+
+	//저장된 데이터 전체 출력
+	printf("현재 데이터의 수 : %d\n", arraylist.numOfData); //5
+	PrintAll(&arraylist);
+	printf("\n\n");
+
+	//숫자 22를 탐색해서 삭제 (첫 번째 22만 삭제)
+	printf("삭제할 데이터를 입력 : ");
+	scanf("%d", &data);
+	Remove(&arraylist, data);
+
+	//데이터 삭제 후 전체 출력
+	printf("현재 데이터의 수 : %d\n", arraylist.numOfData); //4
+	PrintAll(&arraylist);
+}
