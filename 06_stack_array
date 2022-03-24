@@ -1,0 +1,77 @@
+#include<stdio.h>
+#define MAX 4 // stack의 최대 길이
+
+typedef struct node { // 자료 구조의 데이터 한칸을 node 라고 부름
+	int arr[MAX]; // 최대 길이만큼 공간 할당
+	int top; // stack 의 가장 마지막 데이터 위치
+} Stack;
+
+void init(Stack *p_stack)
+{
+	p_stack->top = -1;
+}
+
+void push(Stack *p_stack, int data)
+{
+	// arr[i] 에 하나씩 추가, top 에 ++
+	// MAX 를 넘어가면 Stack overflow 출력
+	if (p_stack->top >= MAX) {
+		printf("Stack overflow\n");
+		printf("\n");
+		return;
+	}
+	p_stack->arr[++p_stack->top] = data;
+	printf("arr : %d\n", p_stack->arr[p_stack->top]);
+	printf("top : %d\n", p_stack->top);
+	printf("\n");
+}
+int peek(Stack * p_stack)
+{
+	// 제일 마지막 arr[i] 를 출력
+	if (p_stack->top >= 0)
+		return p_stack->arr[p_stack->top];
+}
+
+int pop(Stack *p_stack)
+{
+	// arr[i] 를 끝에서 빼고, top 에 --
+	// 마지막을 빼면 Stack underflow 출력
+	if (p_stack->top < 0) {
+		p_stack->top += 1;
+		return printf("Stack Underflow\n");
+	}
+	//free(p_stack); 
+
+	return p_stack->arr[p_stack->top--];
+}
+
+int main()
+{
+	Stack stack; // Stack 구조체 생성
+
+	init(&stack); // top 을 -1 로 -> 초기화
+	push(&stack, 5);
+	push(&stack, 2);
+	push(&stack, 7);
+	push(&stack, 8);
+	push(&stack, 8);
+	push(&stack, 8);
+	push(&stack, 10); // stack overflow 발생(배열의 볌위를 벗어남)
+
+	printf("peek : %d\n", peek(&stack));
+	printf("\n");
+
+	int n;
+	n = pop(&stack); // 제일 마지막 데이터 반환
+	printf("pop : %d\n", n);
+	n = pop(&stack);
+	printf("pop : %d\n", n);
+	n = pop(&stack);
+	printf("pop : %d\n", n);
+	n = pop(&stack);
+	printf("pop : %d\n", n);
+	n = pop(&stack); // stack underflow 발생(배열에 데이터가 없음)
+	printf("pop : %d\n", n);
+
+	return 0;
+}
