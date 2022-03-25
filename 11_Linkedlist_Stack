@@ -1,0 +1,59 @@
+#include<stdio.h>
+#include<stdlib.h> // malloc, free 를 사용하기 위한 헤더
+#define EMPTY 0 // EMPTY 를 0 으로 지정 => 아무 구조체도 안들어간 초기값
+
+typedef struct node {
+	int data;
+	struct node *link; // struct node 구조체 포인터
+}Stack;
+
+// heap 영역에 동적할당하는 함수
+Stack* get_node()
+{
+	Stack *tmp;
+	tmp = (Stack*)malloc(sizeof(Stack));
+	tmp->link = EMPTY; // 구조체의 link 에 EMPTY 를 넣음 (아무 주소도 없는 형태)
+	return tmp;
+}
+
+// main 의 top 에 동적할당된 주소를 넘긴다
+// main 의 top 이 가리키는 주소의 구조체 data 에 내 data 를 저장
+// main 의 top 이 가리키는 주소의 구조체 link 에 내 data 전의 구조체 주소를 저장
+
+
+void push(Stack **top, int data)
+{
+	Stack *tmp = *top;
+	*top = get_node();
+	//get_node()->data = data;
+	(*top)->data = data;
+	(*top)->link = tmp;
+}
+
+int pop(Stack **top)
+{
+	if (*top == EMPTY) {
+		printf("Stack Underflow\n");
+		return -1;
+	}
+
+	Stack *tmp = *top;
+	int num = (*top)->data;
+	*top = (*top)->link;
+	free(tmp);
+
+	return num;
+}
+
+int main()
+{
+	Stack *top = EMPTY; // Stack 구조체 포인터 tmp 선언 후 빈 주소를 넣어줌
+	push(&top, 10);
+	push(&top, 20);
+	push(&top, 30);
+
+	printf("%d\n", pop(&top));
+	printf("%d\n", pop(&top));
+	printf("%d\n", pop(&top));
+	printf("%d\n", pop(&top)); //stack underflow
+}
