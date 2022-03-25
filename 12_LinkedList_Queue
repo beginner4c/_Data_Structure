@@ -1,0 +1,65 @@
+#include<stdio.h>
+#include<stdlib.h>
+#define EMPTY 0
+// rear 는 입력, front 는 출력
+// linked queue 가 stack 방식과 다른 점은 data 의 연결 방식이다.
+// stack의 경우 각 data의 끝을 보고 있지만 queue의 경우 data의 앞을 보고 있다
+
+typedef struct node {
+	int data;
+	struct node* link;
+}Queue;
+
+Queue *get_node() { // link 구조체를 따라가게
+	Queue *tmp;
+	tmp = (Queue*)malloc(sizeof(Queue));
+	tmp->link = EMPTY;
+	return tmp;
+}
+
+void enqueue(Queue **front, Queue **rear, int data) {
+	if (*front != EMPTY){
+		Queue *tmp = *rear;
+		*rear = get_node();
+		(*rear)->data = data;
+		tmp->link = *rear;
+	}
+	else {
+		*rear = get_node();
+		(*rear)->data = data;
+		*front = *rear;
+	}
+}
+
+int dequeue(Queue **front) {
+
+	static int i = 0;
+
+	if (*front == NULL) {
+		printf("No data\n");
+		return 0;
+	}
+
+	int show = (*front)->data;
+	*front = (*front)->link;
+
+	printf("%d 번 째 데이터 출력 : ", ++i);
+	return show;
+}
+
+int main()
+{
+	Queue *front = EMPTY;
+	Queue *rear = EMPTY;
+
+	enqueue(&front, &rear, 10); // 입력
+	enqueue(&front, &rear, 20);
+	enqueue(&front, &rear, 30);
+	printf("\n");
+
+	printf("%d\n", dequeue(&front));
+	printf("%d\n", dequeue(&front));
+	printf("%d\n", dequeue(&front));
+
+	return 0;
+}
