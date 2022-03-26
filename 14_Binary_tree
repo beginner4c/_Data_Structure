@@ -1,0 +1,163 @@
+#include<stdio.h>
+#include<stdlib.h>
+// 이진 탐색 트리
+#define EMPTY 0
+
+typedef struct node {
+	int data;
+	struct node *left;
+	struct node *right;
+} Tree;
+
+Tree *Get_node() {
+	Tree *tmp = (Tree*)malloc(sizeof(Tree));
+	tmp->left = EMPTY;
+	tmp->right = EMPTY;
+}
+
+void Insert_data(Tree **root, int data) {
+
+	if (*root == EMPTY) {
+		*root = Get_node();
+		(*root)->data = data;
+		printf("data = %d\n", (*root)->data);
+		return;
+	}
+
+	if (data > (*root)->data) {
+		printf("지나가는 data = %d\n", (*root)->data);
+		Insert_data(&(*root)->right, data);
+	}
+	else if (data < (*root)->data) {
+		printf("지나가는 data = %d\n", (*root)->data);
+		Insert_data(&(*root)->left, data);
+	}
+}
+
+void preorder(Tree** root) //전위
+{
+	if (*root != EMPTY) { // 받은 값이 비어있지 않다면
+		printf("data : %d\n", (*root)->data); // 출력
+		preorder(&(*root)->left); // 왼쪽 방향 재귀 함수
+		preorder(&(*root)->right); // 오른쪽 방향 재귀 함수
+	}
+}
+
+void Inorder(Tree** root) //중위
+{	//1.왼쪽재귀
+	//2.출력
+	//3.오른쪽재귀
+	if (*root != EMPTY) { // 받은 값이 비어있지 않다면
+		Inorder(&(*root)->left); // 왼쪽 방향 재귀 함수
+		printf("data : %d\n", (*root)->data); // 출력
+		Inorder(&(*root)->right); // 오른쪽 방향 재귀 함수
+	}
+}
+void postorder(Tree** root) //후위
+{
+	if (*root != EMPTY) { // 받은 값이 비어있지 않다면
+		postorder(&(*root)->left); // 왼쪽 방향 재귀 함수
+		postorder(&(*root)->right); // 오른쪽 방향 재귀 함수
+		printf("data : %d\n", (*root)->data); // 출력
+	}
+}
+
+Tree *minTree(Tree **root) { // 받아온 주소의 왼쪽 링크 반환
+	Tree *tmp = *root;
+	while (tmp->left != EMPTY) { // 반복해서 제일 작은 data를 가진 구조체를 찾는 것
+		tmp = tmp->left;
+	}
+	return tmp;
+}
+Tree* del_data(Tree **root, int data) {
+	//1.데이터를 찾아주세요
+	//2.link 양쪽이 다있는가?
+	//3.link 왼쪽만?
+	//4.link 오른쪽만?
+	//5.link 둘다 없는가? => target 그냥지워주면 가르키던 link 가 NULL => EMPTY 삽입
+	Tree *tmp = EMPTY;
+
+
+}
+	
+	/*
+	if (*root == EMPTY) {
+		printf("No data\n");
+		return;
+	}
+	else if (*root != EMPTY) {
+		if ((*root)->data == data) { // 받아온 데이터가 찾는 것과 같은 경우
+			if ((*root)->right == EMPTY && (*root)->left == EMPTY) { // link 가 둘 다 없을 때
+				free(*root); // 바로 root 삭제
+				return tmp; // 주소로는 0 을 반환
+			}
+			else if ((*root)->right != EMPTY && (*root)->left == EMPTY) { // link 가 오른쪽에 있을 때
+				tmp = (*root)->right; // 오른쪽 링크를 tmp 에 저장
+				free(*root); // 찾은 root 삭제
+				return tmp; // 주소로 tmp 반환
+			}
+			else if ((*root)->left != EMPTY && (*root)->right == EMPTY) { // link 가 왼쪽에 있을 때
+				tmp = (*root)->left; // 왼쪽 링크를 tmp 에 저장
+				free(*root); // 찾은 root 삭제
+				return tmp; // 주소로 tmp 반환
+			}
+			else { // link 가 둘 다 있을 경우 찾은 데이터 오른쪽 link 에서 다시 왼쪽 link의 데이터를 가져오게 한다
+				// 원래 삭제해야할 구조체를 minTree 함수로 찾아낸 구조체로 바꿀 것이다
+				tmp = minTree(&(*root)->right);
+				(*root)->data = tmp->data; // 찾아낸 구조체의 오른쪽 link -> 왼쪽 link 의 데이터를 저장?
+				int min = (*root)->data; // 데이터를 따로 저장
+				// 삭제되었어야할 구조체의 오른쪽 link 에 data를 준 구조체를 다시 찾아서 삭제한다
+				(*root)->right = del_data(&(*root)->right, min); // 원래라면 삭제되었어야 할 구조체가 데이터를 받아와서 아래 구조체를 연결해야 하기 때문에
+				// 그 구조체의 오른쪽 link 에 다시 삭제를 걸고 link 를 복구시켜준다
+			}
+		}
+		else if ((*root)->data > data) { // 받아온 데이터가 찾는 것보다 큰 경우 왼쪽 link 가르키는 곳으로 재귀함수
+			(*root)->left = del_data(&(*root)->left, data); // 찾게되면 삭제한 노드의 이전 레벨 노드 왼쪽 링크에 EMPTY 혹은 삭제한 노드의 아래 링크 저장
+		}
+		else if ((*root)->data < data) { // 받아온 데이터가 찾는 것보다 작은 경우 오른쪽 link 가르키는 곳으로 재귀함수
+			(*root)->right = del_data(&(*root)->right, data); // 찾게되면 삭제한 노드 이전 레벨 노드 오른쪽 링크에 EMPTY 혹은 삭제한 노드의 아래 링크 저장
+		}
+	}
+}
+*/
+void main() {
+	Tree *root = EMPTY;
+	int data, select;
+
+	//20
+	//10
+	//30
+	//25
+	//35
+	//27
+	//26
+	//28
+	while (1) {
+		printf("1. Insert_data\n");
+		printf("2. InOrder\n");
+		printf("3. Delete_data\n");
+		printf("번호 입력 : "); scanf("%d", &select);
+		system("cls");
+
+		if (select == 1) {
+			printf("data 입력 : "); scanf("%d", &data);
+			Insert_data(&root, data);
+		}
+		else if (select == 2) {
+			if (root == EMPTY) {
+				printf("No data");
+			}
+			else
+				Inorder(&root);
+		}
+		else if (select == 3) {
+			printf("삭제할 data 입력 : "); scanf("%d", &data);
+			del_data(&root, data);
+		}
+		else {
+			printf("No number, retry\n");
+		}
+		system("pause");
+		system("cls");
+	}
+}
