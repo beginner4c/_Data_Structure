@@ -1,0 +1,119 @@
+#include<stdio.h>
+#include<stdlib.h>
+#define EMPTY 0
+
+typedef struct node {
+	int data;
+	struct node* prev; //이전노드
+	struct node* next; //다음노드
+}DoubleLinkedList;
+
+DoubleLinkedList* GetNode() { // 동적 할당 + link pointer 초기화
+	DoubleLinkedList *tmp = (DoubleLinkedList*)malloc(sizeof(DoubleLinkedList));
+	tmp->next = EMPTY;
+	tmp->prev = EMPTY;
+	return tmp;
+}
+
+void InsertNode(DoubleLinkedList** head, DoubleLinkedList** tail, int data) { // 노드 삽입 함수
+	if (*head == EMPTY) { // head 구조체가 비어있으면
+		*head = GetNode(); // 동적 할당
+		*tail = *head; // tail 구조체 내용은 head 구조체와 동일(비어있음)
+		(*head)->data = data; // head 구조체 + tail 구조체에 받아온 data 삽입
+	}
+	else { // head 구조체가 비어있지 않다면
+		DoubleLinkedList *tmp = *tail; // tmp 구조체는 tail 구조체 내용물을 가져옴
+		*tail = GetNode(); // tail 구조체를 비워준다
+		(*tail)->data = data; // tail 구조체에 data 삽입
+		tmp->next = *tail; // tmp 구조체 next link 가 tail 구조체를 가르키도록
+		(*tail)->prev = tmp; // tail 구조체의 prev link 가 tmp 구조체를 가르키도록
+	}
+	// InsertNode(&(*head)->next, &(*tail), data);
+}
+
+int DeleteNode(DoubleLinkedList ** head, DoubleLinkedList ** tail, int data) { // 노드 삭제 함수
+	DoubleLinkedList *tmp = *head; // tmp 구조체는 head 구조체 내용물을 가져옴
+	if (tmp == EMPTY) { // tmp 구조체가 비어있다면
+		printf("No data\n"); // 출력 후
+		return 0; // 함수 종료
+	}
+	else if (tmp->data == data) { // tmp 구조체의 data 가 찾는 data 값과 같다면
+		(*tail)->next = tmp->next; // tail 구조체의 next link 는 tmp 구조체의 next 링크를 가져온다
+		tmp->next->prev = *tail; // tmp 구조체의 next link 를 따라간 구조체의 prev link 는 tail 구조체를 가르킨다
+		free(tmp); // tmp 구조체를 free 로 삭제한다
+		return data; // 삭제되었다는 표시
+	}
+	else { // 구조체가 비어있지도, 값이 같지도 않다면
+		DeleteNode(&(*head)->next, &(*head), data); // head 의 다음 구조체와 head 구조체를 넣고 재귀 함수를 실행한다
+	}
+}
+
+// static int count = 1; // Find 에 재귀 사용시 선언
+
+void FindNode(DoubleLinkedList *head, DoubleLinkedList *tail, int find) { // 값을 찾는 함수
+
+	int count = 1; // count 선언
+
+	while (1) { // 무한 반복
+		if (head->data == find) { // head 구조체의 data 가 find 값과 동일할 때
+			printf("[%d] : 데이터를 찾았습니다 ", find);
+			printf("(head, %d 회)\n", count); // 출력 후
+			return; // 함수 탈출
+		}
+		else if (tail->data == find) { // tail 구조체의 data 가 find 값과 동일할 때
+			printf("[%d] : 데이터를 찾았습니다 ", find);
+			printf("(tail, %d 회)\n", count); // 출력 후
+			return; // 함수 탈출
+		}
+		else if (head->next == EMPTY) { // head 구조체의 next link 가 비어있을 때
+			printf("No data\n"); // 찾는 data 가 없다고 출력 후
+			return; // 함수 탈출
+		}
+		// if 문에 해당되지 않는 경우 
+		count++; // count 증가
+		head = head->next; // head 구조체에 next link 에서 가르키는 구조체를 삽입
+		tail = tail->prev; // tail 구조체에 prev link 에서 가르키는 구조체를 삽입
+	}
+/* 재귀를 사용했을 때
+	if (head->data == find) {
+		printf("[%d] : 데이터를 찾았습니다 ", find);
+		printf("(head, %d 회)\n", count);
+		return;
+	}
+	else if (tail->data == find) {
+		printf("[%d] : 데이터를 찾았습니다 ", find);
+		printf("(tail, %d 회)\n", count);
+		return;
+	}
+	else if (head->next == EMPTY) {
+		printf("No data\n");
+		return;
+	}
+	else {
+		count++;
+		FindNode(head->next, tail->prev, find);
+		count = 1;
+	}
+*/
+}
+void main() {
+	DoubleLinkedList* head = EMPTY;
+	DoubleLinkedList* tail = EMPTY;
+
+	InsertNode(&head, &tail, 10);
+	printf("h : %d, t : %d\n", head->data, tail->data);
+	InsertNode(&head, &tail, 20);
+	printf("h : %d, t : %d\n", head->data, tail->data);
+	InsertNode(&head, &tail, 30);
+	printf("h : %d, t : %d\n", head->data, tail->data);
+	InsertNode(&head, &tail, 40);
+	printf("h : %d, t : %d\n", head->data, tail->data);
+	InsertNode(&head, &tail, 50);
+	printf("h : %d, t : %d\n\n", head->data, tail->data);
+
+	printf("%d\n\n", DeleteNode(&head, &tail, 20));
+
+	FindNode(head, tail, 30);
+	FindNode(head, tail, 40);
+	FindNode(head, tail, 20);
+}
